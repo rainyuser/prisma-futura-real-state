@@ -209,6 +209,51 @@ export default function Admin() {
                                             Delete
                                         </button>
                                     </div>
+                                    {/* DISTRIBUTE PROFIT */}
+                                    <div className="divider my-2"></div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="ETH"
+                                            className="input input-bordered input-sm w-full"
+                                            id={`profit-${p.id}`}
+                                        />
+                                        <button
+                                            className="btn btn-warning btn-sm"
+                                            onClick={async () => {
+                                                const input =
+                                                    document.getElementById(
+                                                        `profit-${p.id}`,
+                                                    ) as HTMLInputElement;
+                                                if (!input?.value) return;
+                                                try {
+                                                    const { ethers } =
+                                                        await import('ethers');
+                                                    const contract =
+                                                        await getContract();
+                                                    const tx =
+                                                        await contract.distributeProfit(
+                                                            p.blockchain_id,
+                                                            {
+                                                                value: ethers.parseEther(
+                                                                    input.value,
+                                                                ),
+                                                            },
+                                                        );
+                                                    await tx.wait();
+                                                    alert('Profit distributed');
+                                                    input.value = '';
+                                                } catch (err: any) {
+                                                    alert(
+                                                        'Error: ' + err.message,
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            Distribute
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}

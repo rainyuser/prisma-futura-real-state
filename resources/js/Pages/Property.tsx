@@ -42,7 +42,7 @@ export default function Property() {
     const [dbProperty, setDbProperty] = useState<DbProperty | null>(null);
 
     const [amount, setAmount] = useState('');
-    const [profitAmount, setProfitAmount] = useState('');
+
     const [loading, setLoading] = useState(false);
 
     // 🧠 FORMATTERS
@@ -159,26 +159,6 @@ export default function Property() {
 
         try {
             const tx = await contract.claim(id);
-            await tx.wait();
-            await loadProperty();
-        } catch (err) {
-            console.error(err);
-        }
-
-        setLoading(false);
-    };
-
-    // 🧪 DEBUG
-    const injectProfit = async () => {
-        if (!contract) return;
-
-        setLoading(true);
-
-        try {
-            const tx = await contract.distributeProfit(id, {
-                value: ethers.parseEther(profitAmount || '0'),
-            });
-
             await tx.wait();
             await loadProperty();
         } catch (err) {
@@ -334,28 +314,6 @@ export default function Property() {
                                         disabled={loading || !hasPending}
                                     >
                                         {hasPending ? 'Claim' : 'No earnings'}
-                                    </button>
-                                </div>
-
-                                <div className="divider">Debug</div>
-
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="ETH to distribute"
-                                    className="input input-bordered"
-                                    value={profitAmount}
-                                    onChange={(e) =>
-                                        setProfitAmount(e.target.value)
-                                    }
-                                />
-
-                                <div className="flex justify-end">
-                                    <button
-                                        className={`btn btn-warning btn-sm ${loading ? 'loading' : ''}`}
-                                        onClick={injectProfit}
-                                    >
-                                        Inject Profit
                                     </button>
                                 </div>
                             </div>
